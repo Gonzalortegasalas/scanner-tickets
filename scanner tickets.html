@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tickets IA">
+<title>Scanner de Tickets IA</title>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --card: #ffffff;
+    --text: #1c1c1e;
+    --sub: #6e6e73;
+    --border: #d1d1d6;
+    --accent: #007aff;
+    --danger: #ff3b30;
+    --success: #34c759;
+    --radius: 12px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: calc(80px + var(--safe-bottom)); }
+
+  /* NAV BAR */
+  .navbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border); padding: 14px 20px 10px; position: sticky; top: 0; z-index: 100; }
+  .navbar h1 { font-size: 17px; font-weight: 600; text-align: center; }
+
+  /* SECTIONS */
+  .section { display: none; padding: 16px; }
+  .section.active { display: block; }
+
+  /* BOTTOM TABS */
+  .tabs { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 0.5px solid var(--border); display: flex; padding-bottom: var(--safe-bottom); z-index: 100; }
+  .tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 0 4px; background: none; border: none; cursor: pointer; color: var(--sub); font-size: 10px; gap: 3px; }
+  .tab-btn.active { color: var(--accent); }
+  .tab-btn svg { width: 24px; height: 24px; }
+
+  /* CARDS */
+  .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* UPLOAD */
+  .upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; cursor: pointer; background: var(--card); transition: border-color 0.2s; }
+  .upload-area:active { border-color: var(--accent); }
+  .upload-area svg { width: 48px; height: 48px; color: var(--sub); margin-bottom: 12px; }
+  .upload-area p { color: var(--sub); font-size: 15px; margin-bottom: 4px; }
+  .upload-area small { color: #aeaeb2; font-size: 13px; }
+  #file-input { display: none; }
+
+  .preview-wrap { position: relative; margin-bottom: 12px; }
+  .preview-wrap img { width: 100%; max-height: 280px; object-fit: contain; border-radius: var(--radius); border: 1px solid var(--border); display: block; }
+  .remove-btn { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(0,0,0,0.55); border-radius: 50%; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  /* BUTTONS */
+  .btn { width: 100%; padding: 14px; border-radius: var(--radius); border: none; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn:active { opacity: 0.7; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-secondary { background: var(--card); color: var(--accent); border: 1.5px solid var(--accent); margin-top: 8px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-sm { padding: 8px 14px; font-size: 14px; font-weight: 500; border-radius: 8px; width: auto; display: inline-flex; align-items: center; gap: 5px; }
+
+  /* SPINNER */
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -4px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RESULT */
+  .result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .store-name { font-size: 19px; font-weight: 700; flex: 1; }
+  .cat-badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 600; white-space: nowrap; margin-left: 8px; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; }
+  .row:last-child { border-bottom: none; }
+  .row .lbl { color: var(--sub); }
+  .items-section { margin-top: 12px; }
+  .items-title { font-size: 12px; font-weight: 600; color: var(--sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .item-row { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
+  .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; padding: 10px 0 0; margin-top: 6px; border-top: 1.5px solid var(--text); }
+  .action-row { display: flex; gap: 8px; margin-top: 14px; }
+  .action-row .btn { flex: 1; }
+
+  /* ALERT */
+  .alert { padding: 12px 14px; border-radius: 10px; font-size: 14px; margin-top: 12px; }
+  .alert-danger { background: #fff0ef; color: #c0392b; border: 1px solid #ffb3b0; }
+  .alert-success { background: #edfaf1; color: #1a7a3b; border: 1px solid #a8e6c0; }
+
+  /* TICKET LIST */
+  .ticket-item { display: flex; align-items: center; gap: 12px; }
+  .ticket-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
+  .ticket-info { flex: 1; min-width: 0; }
+  .ticket-info h3 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ticket-info p { font-size: 13px; color: var(--sub); margin-top: 2px; }
+  .ticket-amount { font-size: 15px; font-weight: 700; white-space: nowrap; }
+
+  /* FILTER CHIPS */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--card); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; color: var(--sub); flex-shrink: 0; }
+  .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* SUMMARY */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-card { background: var(--card); border-radius: var(--radius); padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+  .stat-label { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 700; }
+  .bar-row { margin-bottom: 14px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; }
+  .bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; background: var(--accent); transition: width 0.5s ease; }
+
+  /* SETTINGS */
+  .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-label { font-size: 15px; }
+  .setting-sub { font-size: 13px; color: var(--sub); margin-top: 2px; }
+  input[type="password"], input[type="text"] { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; width: 100%; background: var(--bg); color: var(--text); margin-top: 10px; }
+  input:focus { outline: none; border-color: var(--accent); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 48px 20px; color: var(--sub); }
+  .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .empty p { font-size: 15px; }
+
+  /* CAT COLORS */
+  .cat-food    { background: #d4edda; color: #1a5e35; }
+  .cat-trans   { background: #cce5ff; color: #0b4fa3; }
+  .cat-health  { background: #fde8d8; color: #7d2d0a; }
+  .cat-tech    { background: #e6d8ff; color: #4a1f9e; }
+  .cat-home    { background: #fff3cc; color: #7a5300; }
+  .cat-cloth   { background: #fcdde8; color: #7a1535; }
+  .cat-other   { background: #e8e8ed; color: #3a3a3c; }
+  .icon-food   { background: #d4edda; }
+  .icon-trans  { background: #cce5ff; }
+  .icon-health { background: #fde8d8; }
+  .icon-tech   { background: #e6d8ff; }
+  .icon-home   { background: #fff3cc; }
+  .icon-cloth  { background: #fcdde8; }
+  .icon-other  { background: #e8e8ed; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <h1 id="page-title">Escanear Ticket</h1>
+</div>
+
+<!-- SCAN SECTION -->
+<div id="sec-scan" class="section active">
+  <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3"/></svg>
+    <p>Tomar foto o subir imagen</p>
+    <small>JPG, PNG, HEIC — toca para abrir cámara</small>
+  </div>
+  <input type="file" id="file-input" accept="image/*" capture="environment" onchange="loadImg(event)">
+
+  <div id="preview-wrap" class="preview-wrap" style="display:none; margin-top:12px">
+    <img id="preview-img" alt="Vista previa">
+    <button class="remove-btn" onclick="clearImg()">✕</button>
+  </div>
+
+  <button class="btn btn-primary" id="analyze-btn" onclick="analyze()" disabled style="margin-top:12px">
+    ✦ Analizar con IA
+  </button>
+
+  <div id="scan-result" style="margin-top:12px"></div>
+</div>
+
+<!-- TICKETS SECTION -->
+<div id="sec-tickets" class="section">
+  <div class="chips" id="filter-chips">
+    <div class="chip active" onclick="filterBy('todas')">Todas</div>
+  </div>
+  <div id="tickets-list"></div>
+</div>
+
+<!-- SUMMARY SECTION -->
+<div id="sec-summary" class="section">
+  <div class="stat-grid" id="stat-grid">
+    <div class="stat-card"><div class="stat-label">Tickets</div><div class="stat-val" id="s-count">0</div></div>
+    <div class="stat-card"><div class="stat-label">Gasto total</div><div class="stat-val" id="s-total">$0</div></div>
+    <div class="stat-card"><div class="stat-label">Categorías</div><div class="stat-val" id="s-cats">0</div></div>
+    <div class="stat-card"><div class="stat-label">Promedio</div><div class="stat-val" id="s-avg">$0</div></div>
+  </div>
+  <div id="cat-bars"></div>
+</div>
+
+<!-- SETTINGS SECTION -->
+<div id="sec-settings" class="section">
+  <div class="card">
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">API Key de Anthropic</div>
+        <div class="setting-sub">Se guarda solo en este dispositivo</div>
+      </div>
+    </div>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." oninput="saveKey()">
+    <div id="key-status" style="font-size:13px; color:var(--sub); margin-top:8px; text-align:center"></div>
+  </div>
+  <div class="card" style="margin-top:0">
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Obtener API Key gratis</div>
+        <div class="setting-sub">console.anthropic.com</div>
+      </div>
+      <button class="btn btn-sm btn-secondary" onclick="window.open('https://console.anthropic.com')">Ir →</button>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Borrar todos los tickets</div>
+        <div class="setting-sub">No se puede deshacer</div>
+      </div>
+      <button class="btn btn-sm" style="background:#fff0ef;color:var(--danger);border:1px solid var(--danger)" onclick="clearAll()">Borrar</button>
+    </div>
+  </div>
+  <div style="text-align:center; font-size:12px; color:#aeaeb2; margin-top:20px">
+    <p>Scanner de Tickets IA · Todos los datos se guardan localmente en este dispositivo</p>
+  </div>
+</div>
+
+<!-- BOTTOM TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="goTab('scan','Escanear Ticket',0)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+    Escanear
+  </button>
+  <button class="tab-btn" onclick="goTab('tickets','Mis Tickets',1)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+    Tickets
+  </button>
+  <button class="tab-btn" onclick="goTab('summary','Resumen',2)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    Resumen
+  </button>
+  <button class="tab-btn" onclick="goTab('settings','Configuración',3)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Config
+  </button>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────
+let tickets = JSON.parse(localStorage.getItem('tickets_v2') || '[]');
+let currentB64 = null;
+let currentMime = 'image/jpeg';
+let activeFilter = 'todas';
+
+// ── INIT ───────────────────────────────────────────────────────────────
+window.onload = () => {
+  const k = localStorage.getItem('anthropic_key') || '';
+  document.getElementById('api-key-input').value = k;
+  updateKeyStatus();
+};
+
+// ── TABS ───────────────────────────────────────────────────────────────
+function goTab(id, title, idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.getElementById('page-title').textContent = title;
+  if(id==='tickets') renderTickets();
+  if(id==='summary') renderSummary();
+}
+
+// ── IMAGE ──────────────────────────────────────────────────────────────
+function loadImg(e) {
+  const f = e.target.files[0];
+  if(!f) return;
+  currentMime = f.type || 'image/jpeg';
+  const r = new FileReader();
+  r.onload = () => {
+    currentB64 = r.result.split(',')[1];
+    document.getElementById('preview-img').src = r.result;
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('analyze-btn').disabled = false;
+    document.getElementById('scan-result').innerHTML = '';
+  };
+  r.readAsDataURL(f);
+}
+
+function clearImg() {
+  currentB64 = null;
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  document.getElementById('analyze-btn').disabled = true;
+  document.getElementById('scan-result').innerHTML = '';
+}
+
+// ── ANALYZE ────────────────────────────────────────────────────────────
+async function analyze() {
+  const key = localStorage.getItem('anthropic_key') || '';
+  if(!key) {
+    showResult(null, 'Primero configura tu API Key en la pestaña Config ⚙️');
+    return;
+  }
+  if(!currentB64) return;
+
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Analizando...';
+
+  const prompt = `Output only a JSON object with no other text. No markdown, no backticks, no explanation.
+Format: {"tienda":"store","fecha":"dd/mm/yyyy","categoria":"Supermercado","items":[{"nombre":"item","precio":0.00}],"subtotal":0.00,"impuestos":0.00,"total":0.00,"moneda":"MXN","direccion":null,"notas":null}
+categoria options: Alimentos,Supermercado,Restaurante,Transporte,Gasolina,Salud,Farmacia,Tecnologia,Electronica,Hogar,Ferreteria,Ropa,Otro
+Use null for unknown strings, 0 for unknown numbers.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: currentMime, data: currentB64 } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+
+    if(!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || `Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const raw = data.content.map(b => b.text || '').join('').trim();
+    // Try multiple strategies to extract JSON
+    let info = null;
+    const strategies = [
+      () => JSON.parse(raw),
+      () => { const m = raw.match(/```json\s*([\s\S]*?)```/); if(m) return JSON.parse(m[1]); throw new Error(); },
+      () => { const m = raw.match(/\{[\s\S]*\}/); if(m) return JSON.parse(m[0]); throw new Error(); },
+      () => { const start = raw.indexOf('{'); const end = raw.lastIndexOf('}'); if(start>=0&&end>start) return JSON.parse(raw.slice(start,end+1)); throw new Error(); }
+    ];
+    for(const s of strategies) { try { info = s(); break; } catch(e) {} }
+    if(!info) throw new Error('Formato de respuesta inválido. Intenta de nuevo.');
+    showResult(info, null);
+
+  } catch(e) {
+    let msg = e.message || 'Error desconocido';
+    // Add debug info
+    msg += ' | Detalle técnico: ' + String(e);
+    showResult(null, msg);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Analizar con IA';
+}
+
+// ── SHOW RESULT ────────────────────────────────────────────────────────
+function showResult(info, errMsg) {
+  const el = document.getElementById('scan-result');
+  if(errMsg) {
+    el.innerHTML = `<div class="alert alert-danger">⚠️ ${errMsg}</div>`;
+    return;
+  }
+
+  const cc = catClass(info.categoria);
+  const mon = info.moneda || '$';
+  const itemsHTML = (info.items && info.items.length)
+    ? info.items.map(it => `<div class="item-row"><span>${it.nombre||'—'}</span><span>${mon} ${(+it.precio||0).toFixed(2)}</span></div>`).join('')
+    : '<div style="font-size:13px;color:var(--sub)">Sin items detectados</div>';
+
+  const tid = 'T' + Date.now();
+  window._pending = { id: tid, info, imgB64: currentB64, mime: currentMime };
+
+  el.innerHTML = `
+<div class="card" id="${tid}">
+  <div class="result-header">
+    <span class="store-name">${info.tienda || 'Comercio'}</span>
+    <span class="cat-badge ${cc}">${info.categoria || 'Otro'}</span>
+  </div>
+  <div class="row"><span class="lbl">📅 Fecha</span><span>${info.fecha || '—'}</span></div>
+  ${info.direccion ? `<div class="row"><span class="lbl">📍</span><span style="font-size:13px;text-align:right;max-width:65%">${info.direccion}</span></div>` : ''}
+  <div class="items-section">
+    <div class="items-title">Productos</div>
+    ${itemsHTML}
+    <div class="total-row"><span>Total</span><span>${mon} ${(+info.total||0).toFixed(2)}</span></div>
+  </div>
+  ${info.notas ? `<div style="font-size:13px;color:var(--sub);margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)">${info.notas}</div>` : ''}
+  <div class="action-row">
+    <button class="btn btn-secondary" onclick="saveTicket()">💾 Guardar</button>
+    <button class="btn btn-primary" onclick="exportPDF()">📄 Guardar PDF</button>
+  </div>
+</div>`;
+}
+
+// ── SAVE ───────────────────────────────────────────────────────────────
+function saveTicket() {
+  if(!window._pending) return;
+  const p = window._pending;
+  if(tickets.find(t => t.id === p.id)) return;
+  tickets.unshift({ id: p.id, info: p.info, imgB64: p.imgB64, mime: p.mime, savedAt: new Date().toISOString() });
+  localStorage.setItem('tickets_v2', JSON.stringify(tickets));
+  const card = document.getElementById(p.id);
+  if(card) {
+    const saveBtn = card.querySelector('.btn-secondary');
+    if(saveBtn) { saveBtn.textContent = '✓ Guardado'; saveBtn.disabled = true; }
+  }
+}
+
+// ── PDF ────────────────────────────────────────────────────────────────
+function exportPDF(tid) {
+  let info, imgB64, mime;
+  if(!tid && window._pending) {
+    info = window._pending.info; imgB64 = window._pending.imgB64; mime = window._pending.mime;
+  } else {
+    const t = tickets.find(x => x.id === tid);
+    if(!t) return;
+    info = t.info; imgB64 = t.imgB64; mime = t.mime;
+  }
+  loadJsPDF(() => buildPDF(info, imgB64, mime));
+}
+
+function loadJsPDF(cb) {
+  if(window.jspdf) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+function buildPDF(info, imgB64, mime) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a5' });
+  const W = doc.internal.pageSize.width;
+  let y = 18;
+
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text(info.tienda || 'Ticket', W/2, y, { align: 'center' }); y += 8;
+
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setTextColor(110,110,115);
+  doc.text(`${info.categoria||''} · ${info.fecha||''}`, W/2, y, { align: 'center' }); y += 5;
+  if(info.direccion) { doc.text(info.direccion, W/2, y, { align: 'center' }); y += 5; }
+
+  doc.setTextColor(0,0,0);
+  doc.setDrawColor(210,210,214); doc.line(10, y, W-10, y); y += 8;
+
+  if(imgB64) {
+    try {
+      const imgType = (mime||'image/jpeg').split('/')[1].toUpperCase().replace('JPEG','JPG');
+      const maxH = 55, maxW = W - 20;
+      doc.addImage('data:'+mime+';base64,'+imgB64, imgType, 10, y, maxW, maxH, undefined, 'FAST');
+      y += maxH + 8;
+    } catch(e) {}
+  }
+
+  doc.setFontSize(10);
+  if(info.items && info.items.length) {
+    doc.setFont('helvetica','bold'); doc.text('Productos', 10, y); y += 5;
+    doc.setFont('helvetica','normal');
+    info.items.forEach(it => {
+      if(y > 175) { doc.addPage(); y = 15; }
+      doc.text(String(it.nombre||''), 10, y);
+      doc.text(`${info.moneda||'$'} ${(+it.precio||0).toFixed(2)}`, W-10, y, { align: 'right' });
+      y += 5;
+    });
+    doc.setDrawColor(210,210,214); doc.line(10, y, W-10, y); y += 6;
+  }
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  doc.text('TOTAL', 10, y);
+  doc.text(`${info.moneda||'$'} ${(+info.total||0).toFixed(2)}`, W-10, y, { align: 'right' });
+
+  const fname = `ticket_${(info.tienda||'ticket').replace(/[^a-zA-Z0-9]/g,'_')}_${(info.fecha||Date.now().toString()).replace(/\//g,'-')}.pdf`;
+  doc.save(fname);
+}
+
+// ── TICKETS LIST ───────────────────────────────────────────────────────
+function filterBy(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.textContent.toLowerCase() === cat));
+  renderTickets();
+}
+
+function renderTickets() {
+  const cats = ['Todas', ...new Set(tickets.map(t => t.info.categoria || 'Otro'))];
+  const chips = document.getElementById('filter-chips');
+  chips.innerHTML = cats.map(c =>
+    `<div class="chip${activeFilter === c.toLowerCase() ? ' active' : ''}" onclick="filterBy('${c.toLowerCase()}')">${c}</div>`
+  ).join('');
+
+  const list = activeFilter === 'todas' ? tickets : tickets.filter(t => (t.info.categoria||'otro').toLowerCase() === activeFilter);
+  const el = document.getElementById('tickets-list');
+
+  if(!list.length) {
+    el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg><p>${tickets.length ? 'Sin tickets en esta categoría' : 'Escanea tu primer ticket'}</p></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(t => {
+    const cc = catClass(t.info.categoria);
+    const ic = iconClass(t.info.categoria);
+    return `<div class="card">
+  <div class="ticket-item">
+    <div class="ticket-icon ${ic}">${catEmoji(t.info.categoria)}</div>
+    <div class="ticket-info">
+      <h3>${t.info.tienda||'Comercio'}</h3>
+      <p><span class="cat-badge ${cc}" style="font-size:11px;padding:2px 7px">${t.info.categoria||'Otro'}</span> · ${t.info.fecha||'—'}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div class="ticket-amount">${t.info.moneda||'$'} ${(+t.info.total||0).toFixed(2)}</div>
+      <button class="btn btn-sm btn-primary" onclick="exportPDF('${t.id}')">📄 PDF</button>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+}
+
+// ── SUMMARY ────────────────────────────────────────────────────────────
+function renderSummary() {
+  const n = tickets.length;
+  const total = tickets.reduce((a,t) => a + (+t.info.total||0), 0);
+  const bycat = {};
+  tickets.forEach(t => {
+    const c = t.info.categoria || 'Otro';
+    bycat[c] = (bycat[c]||0) + (+t.info.total||0);
+  });
+  document.getElementById('s-count').textContent = n;
+  document.getElementById('s-total').textContent = '$' + total.toFixed(0);
+  document.getElementById('s-cats').textContent = Object.keys(bycat).length;
+  document.getElementById('s-avg').textContent = n ? '$' + (total/n).toFixed(0) : '$0';
+
+  const bars = document.getElementById('cat-bars');
+  if(!Object.keys(bycat).length) { bars.innerHTML = '<div class="empty"><p>Guarda tickets para ver estadísticas</p></div>'; return; }
+  const max = Math.max(...Object.values(bycat));
+  bars.innerHTML = '<div class="card">' + Object.entries(bycat).sort((a,b)=>b[1]-a[1]).map(([c,v]) => `
+<div class="bar-row">
+  <div class="bar-header">
+    <span>${catEmoji(c)} ${c}</span>
+    <span style="font-weight:600">$${v.toFixed(2)}</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+</div>`).join('') + '</div>';
+}
+
+// ── SETTINGS ───────────────────────────────────────────────────────────
+function saveKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  localStorage.setItem('anthropic_key', k);
+  updateKeyStatus();
+}
+
+function updateKeyStatus() {
+  const k = localStorage.getItem('anthropic_key') || '';
+  const el = document.getElementById('key-status');
+  if(k.startsWith('sk-ant')) { el.textContent = '✅ API Key guardada correctamente'; el.style.color = 'var(--success)'; }
+  else if(k.length > 5) { el.textContent = '⚠️ El formato no parece correcto'; el.style.color = 'orange'; }
+  else { el.textContent = 'Ingresa tu API Key de Anthropic'; el.style.color = 'var(--sub)'; }
+}
+
+function clearAll() {
+  if(confirm('¿Borrar todos los tickets guardados? No se puede deshacer.')) {
+    tickets = [];
+    localStorage.setItem('tickets_v2', '[]');
+    alert('Tickets eliminados.');
+  }
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────
+function catClass(c) {
+  if(!c) return 'cat-other';
+  if(/aliment|super|restaur|comid|café|cafe/i.test(c)) return 'cat-food';
+  if(/trans|gasolin|uber|taxi|bus/i.test(c)) return 'cat-trans';
+  if(/salud|farm|medic/i.test(c)) return 'cat-health';
+  if(/tecn|electr|compu/i.test(c)) return 'cat-tech';
+  if(/hogar|ferret|muebl/i.test(c)) return 'cat-home';
+  if(/ropa|moda|calzad|cloth/i.test(c)) return 'cat-cloth';
+  return 'cat-other';
+}
+
+function iconClass(c) {
+  const cc = catClass(c);
+  return cc.replace('cat-','icon-');
+}
+
+function catEmoji(c) {
+  if(!c) return '🧾';
+  if(/aliment|super|restaur|comid|café|cafe/i.test(c)) return '🛒';
+  if(/trans|gasolin|uber|taxi|bus/i.test(c)) return '🚗';
+  if(/salud|farm|medic/i.test(c)) return '💊';
+  if(/tecn|electr|compu/i.test(c)) return '💻';
+  if(/hogar|ferret|muebl/i.test(c)) return '🏠';
+  if(/ropa|moda|calzad/i.test(c)) return '👕';
+  return '🧾';
+}
+</script>
+</body>
+</html>
