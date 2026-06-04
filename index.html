@@ -22,24 +22,24 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: calc(80px + var(--safe-bottom)); }
-
+ 
   /* NAV BAR */
   .navbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border); padding: 14px 20px 10px; position: sticky; top: 0; z-index: 100; }
   .navbar h1 { font-size: 17px; font-weight: 600; text-align: center; }
-
+ 
   /* SECTIONS */
   .section { display: none; padding: 16px; }
   .section.active { display: block; }
-
+ 
   /* BOTTOM TABS */
   .tabs { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 0.5px solid var(--border); display: flex; padding-bottom: var(--safe-bottom); z-index: 100; }
   .tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 0 4px; background: none; border: none; cursor: pointer; color: var(--sub); font-size: 10px; gap: 3px; }
   .tab-btn.active { color: var(--accent); }
   .tab-btn svg { width: 24px; height: 24px; }
-
+ 
   /* CARDS */
   .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-
+ 
   /* UPLOAD */
   .upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; cursor: pointer; background: var(--card); transition: border-color 0.2s; }
   .upload-area:active { border-color: var(--accent); }
@@ -47,11 +47,11 @@
   .upload-area p { color: var(--sub); font-size: 15px; margin-bottom: 4px; }
   .upload-area small { color: #aeaeb2; font-size: 13px; }
   #file-input { display: none; }
-
+ 
   .preview-wrap { position: relative; margin-bottom: 12px; }
   .preview-wrap img { width: 100%; max-height: 280px; object-fit: contain; border-radius: var(--radius); border: 1px solid var(--border); display: block; }
   .remove-btn { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(0,0,0,0.55); border-radius: 50%; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
+ 
   /* BUTTONS */
   .btn { width: 100%; padding: 14px; border-radius: var(--radius); border: none; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
   .btn:active { opacity: 0.7; }
@@ -59,11 +59,11 @@
   .btn-secondary { background: var(--card); color: var(--accent); border: 1.5px solid var(--accent); margin-top: 8px; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-sm { padding: 8px 14px; font-size: 14px; font-weight: 500; border-radius: 8px; width: auto; display: inline-flex; align-items: center; gap: 5px; }
-
+ 
   /* SPINNER */
   .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -4px; margin-right: 6px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
   /* RESULT */
   .result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
   .store-name { font-size: 19px; font-weight: 700; flex: 1; }
@@ -77,12 +77,12 @@
   .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; padding: 10px 0 0; margin-top: 6px; border-top: 1.5px solid var(--text); }
   .action-row { display: flex; gap: 8px; margin-top: 14px; }
   .action-row .btn { flex: 1; }
-
+ 
   /* ALERT */
   .alert { padding: 12px 14px; border-radius: 10px; font-size: 14px; margin-top: 12px; }
   .alert-danger { background: #fff0ef; color: #c0392b; border: 1px solid #ffb3b0; }
   .alert-success { background: #edfaf1; color: #1a7a3b; border: 1px solid #a8e6c0; }
-
+ 
   /* TICKET LIST */
   .ticket-item { display: flex; align-items: center; gap: 12px; }
   .ticket-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
@@ -90,13 +90,13 @@
   .ticket-info h3 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ticket-info p { font-size: 13px; color: var(--sub); margin-top: 2px; }
   .ticket-amount { font-size: 15px; font-weight: 700; white-space: nowrap; }
-
+ 
   /* FILTER CHIPS */
   .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
   .chip { padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--card); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; color: var(--sub); flex-shrink: 0; }
   .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-
+ 
   /* SUMMARY */
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .stat-card { background: var(--card); border-radius: var(--radius); padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
@@ -106,7 +106,7 @@
   .bar-header { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; }
   .bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 4px; background: var(--accent); transition: width 0.5s ease; }
-
+ 
   /* SETTINGS */
   .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
   .setting-row:last-child { border-bottom: none; }
@@ -114,12 +114,12 @@
   .setting-sub { font-size: 13px; color: var(--sub); margin-top: 2px; }
   input[type="password"], input[type="text"] { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; width: 100%; background: var(--bg); color: var(--text); margin-top: 10px; }
   input:focus { outline: none; border-color: var(--accent); }
-
+ 
   /* EMPTY STATE */
   .empty { text-align: center; padding: 48px 20px; color: var(--sub); }
   .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
   .empty p { font-size: 15px; }
-
+ 
   /* CAT COLORS */
   .cat-food    { background: #d4edda; color: #1a5e35; }
   .cat-trans   { background: #cce5ff; color: #0b4fa3; }
@@ -138,11 +138,11 @@
 </style>
 </head>
 <body>
-
+ 
 <div class="navbar">
   <h1 id="page-title">Escanear Ticket</h1>
 </div>
-
+ 
 <!-- SCAN SECTION -->
 <div id="sec-scan" class="section active">
   <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
@@ -151,19 +151,19 @@
     <small>JPG, PNG, HEIC — toca para abrir cámara</small>
   </div>
   <input type="file" id="file-input" accept="image/*" capture="environment" onchange="loadImg(event)">
-
+ 
   <div id="preview-wrap" class="preview-wrap" style="display:none; margin-top:12px">
     <img id="preview-img" alt="Vista previa">
     <button class="remove-btn" onclick="clearImg()">✕</button>
   </div>
-
+ 
   <button class="btn btn-primary" id="analyze-btn" onclick="analyze()" disabled style="margin-top:12px">
     ✦ Analizar con IA
   </button>
-
+ 
   <div id="scan-result" style="margin-top:12px"></div>
 </div>
-
+ 
 <!-- TICKETS SECTION -->
 <div id="sec-tickets" class="section">
   <div class="chips" id="filter-chips">
@@ -171,7 +171,7 @@
   </div>
   <div id="tickets-list"></div>
 </div>
-
+ 
 <!-- SUMMARY SECTION -->
 <div id="sec-summary" class="section">
   <div class="stat-grid" id="stat-grid">
@@ -182,7 +182,7 @@
   </div>
   <div id="cat-bars"></div>
 </div>
-
+ 
 <!-- SETTINGS SECTION -->
 <div id="sec-settings" class="section">
   <div class="card">
@@ -215,7 +215,7 @@
     <p>Scanner de Tickets IA · Todos los datos se guardan localmente en este dispositivo</p>
   </div>
 </div>
-
+ 
 <!-- BOTTOM TABS -->
 <div class="tabs">
   <button class="tab-btn active" onclick="goTab('scan','Escanear Ticket',0)">
@@ -235,21 +235,21 @@
     Config
   </button>
 </div>
-
+ 
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────
 let tickets = JSON.parse(localStorage.getItem('tickets_v2') || '[]');
 let currentB64 = null;
 let currentMime = 'image/jpeg';
 let activeFilter = 'todas';
-
+ 
 // ── INIT ───────────────────────────────────────────────────────────────
 window.onload = () => {
   const k = localStorage.getItem('anthropic_key') || '';
   document.getElementById('api-key-input').value = k;
   updateKeyStatus();
 };
-
+ 
 // ── TABS ───────────────────────────────────────────────────────────────
 function goTab(id, title, idx) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -259,7 +259,7 @@ function goTab(id, title, idx) {
   if(id==='tickets') renderTickets();
   if(id==='summary') renderSummary();
 }
-
+ 
 // ── IMAGE ──────────────────────────────────────────────────────────────
 function loadImg(e) {
   const f = e.target.files[0];
@@ -275,7 +275,7 @@ function loadImg(e) {
   };
   r.readAsDataURL(f);
 }
-
+ 
 function clearImg() {
   currentB64 = null;
   document.getElementById('preview-wrap').style.display = 'none';
@@ -283,7 +283,7 @@ function clearImg() {
   document.getElementById('analyze-btn').disabled = true;
   document.getElementById('scan-result').innerHTML = '';
 }
-
+ 
 // ── ANALYZE ────────────────────────────────────────────────────────────
 async function analyze() {
   const key = localStorage.getItem('anthropic_key') || '';
@@ -292,18 +292,18 @@ async function analyze() {
     return;
   }
   if(!currentB64) return;
-
+ 
   const btn = document.getElementById('analyze-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Analizando...';
-
+ 
   const prompt = `Output only a JSON object with no other text. No markdown, no backticks, no explanation.
 Format: {"tienda":"store","fecha":"dd/mm/yyyy","categoria":"Supermercado","items":[{"nombre":"item","precio":0.00}],"subtotal":0.00,"impuestos":0.00,"total":0.00,"moneda":"MXN","direccion":null,"notas":null}
 categoria options: Alimentos,Supermercado,Restaurante,Transporte,Gasolina,Salud,Farmacia,Tecnologia,Electronica,Hogar,Ferreteria,Ropa,Otro
 Use null for unknown strings, 0 for unknown numbers.`;
-
+ 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://corsproxy.io/?url=https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -323,12 +323,12 @@ Use null for unknown strings, 0 for unknown numbers.`;
         }]
       })
     });
-
+ 
     if(!res.ok) {
       const err = await res.json();
       throw new Error(err.error?.message || `Error ${res.status}`);
     }
-
+ 
     const data = await res.json();
     const raw = data.content.map(b => b.text || '').join('').trim();
     // Try multiple strategies to extract JSON
@@ -342,18 +342,18 @@ Use null for unknown strings, 0 for unknown numbers.`;
     for(const s of strategies) { try { info = s(); break; } catch(e) {} }
     if(!info) throw new Error('Formato de respuesta inválido. Intenta de nuevo.');
     showResult(info, null);
-
+ 
   } catch(e) {
     let msg = e.message || 'Error desconocido';
     // Add debug info
     msg += ' | Detalle técnico: ' + String(e);
     showResult(null, msg);
   }
-
+ 
   btn.disabled = false;
   btn.innerHTML = '✦ Analizar con IA';
 }
-
+ 
 // ── SHOW RESULT ────────────────────────────────────────────────────────
 function showResult(info, errMsg) {
   const el = document.getElementById('scan-result');
@@ -361,16 +361,16 @@ function showResult(info, errMsg) {
     el.innerHTML = `<div class="alert alert-danger">⚠️ ${errMsg}</div>`;
     return;
   }
-
+ 
   const cc = catClass(info.categoria);
   const mon = info.moneda || '$';
   const itemsHTML = (info.items && info.items.length)
     ? info.items.map(it => `<div class="item-row"><span>${it.nombre||'—'}</span><span>${mon} ${(+it.precio||0).toFixed(2)}</span></div>`).join('')
     : '<div style="font-size:13px;color:var(--sub)">Sin items detectados</div>';
-
+ 
   const tid = 'T' + Date.now();
   window._pending = { id: tid, info, imgB64: currentB64, mime: currentMime };
-
+ 
   el.innerHTML = `
 <div class="card" id="${tid}">
   <div class="result-header">
@@ -391,7 +391,7 @@ function showResult(info, errMsg) {
   </div>
 </div>`;
 }
-
+ 
 // ── SAVE ───────────────────────────────────────────────────────────────
 function saveTicket() {
   if(!window._pending) return;
@@ -405,7 +405,7 @@ function saveTicket() {
     if(saveBtn) { saveBtn.textContent = '✓ Guardado'; saveBtn.disabled = true; }
   }
 }
-
+ 
 // ── PDF ────────────────────────────────────────────────────────────────
 function exportPDF(tid) {
   let info, imgB64, mime;
@@ -418,7 +418,7 @@ function exportPDF(tid) {
   }
   loadJsPDF(() => buildPDF(info, imgB64, mime));
 }
-
+ 
 function loadJsPDF(cb) {
   if(window.jspdf) { cb(); return; }
   const s = document.createElement('script');
@@ -426,24 +426,24 @@ function loadJsPDF(cb) {
   s.onload = cb;
   document.head.appendChild(s);
 }
-
+ 
 function buildPDF(info, imgB64, mime) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a5' });
   const W = doc.internal.pageSize.width;
   let y = 18;
-
+ 
   doc.setFontSize(20); doc.setFont('helvetica','bold');
   doc.text(info.tienda || 'Ticket', W/2, y, { align: 'center' }); y += 8;
-
+ 
   doc.setFontSize(10); doc.setFont('helvetica','normal');
   doc.setTextColor(110,110,115);
   doc.text(`${info.categoria||''} · ${info.fecha||''}`, W/2, y, { align: 'center' }); y += 5;
   if(info.direccion) { doc.text(info.direccion, W/2, y, { align: 'center' }); y += 5; }
-
+ 
   doc.setTextColor(0,0,0);
   doc.setDrawColor(210,210,214); doc.line(10, y, W-10, y); y += 8;
-
+ 
   if(imgB64) {
     try {
       const imgType = (mime||'image/jpeg').split('/')[1].toUpperCase().replace('JPEG','JPG');
@@ -452,7 +452,7 @@ function buildPDF(info, imgB64, mime) {
       y += maxH + 8;
     } catch(e) {}
   }
-
+ 
   doc.setFontSize(10);
   if(info.items && info.items.length) {
     doc.setFont('helvetica','bold'); doc.text('Productos', 10, y); y += 5;
@@ -465,37 +465,37 @@ function buildPDF(info, imgB64, mime) {
     });
     doc.setDrawColor(210,210,214); doc.line(10, y, W-10, y); y += 6;
   }
-
+ 
   doc.setFont('helvetica','bold'); doc.setFontSize(13);
   doc.text('TOTAL', 10, y);
   doc.text(`${info.moneda||'$'} ${(+info.total||0).toFixed(2)}`, W-10, y, { align: 'right' });
-
+ 
   const fname = `ticket_${(info.tienda||'ticket').replace(/[^a-zA-Z0-9]/g,'_')}_${(info.fecha||Date.now().toString()).replace(/\//g,'-')}.pdf`;
   doc.save(fname);
 }
-
+ 
 // ── TICKETS LIST ───────────────────────────────────────────────────────
 function filterBy(cat) {
   activeFilter = cat;
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.textContent.toLowerCase() === cat));
   renderTickets();
 }
-
+ 
 function renderTickets() {
   const cats = ['Todas', ...new Set(tickets.map(t => t.info.categoria || 'Otro'))];
   const chips = document.getElementById('filter-chips');
   chips.innerHTML = cats.map(c =>
     `<div class="chip${activeFilter === c.toLowerCase() ? ' active' : ''}" onclick="filterBy('${c.toLowerCase()}')">${c}</div>`
   ).join('');
-
+ 
   const list = activeFilter === 'todas' ? tickets : tickets.filter(t => (t.info.categoria||'otro').toLowerCase() === activeFilter);
   const el = document.getElementById('tickets-list');
-
+ 
   if(!list.length) {
     el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg><p>${tickets.length ? 'Sin tickets en esta categoría' : 'Escanea tu primer ticket'}</p></div>`;
     return;
   }
-
+ 
   el.innerHTML = list.map(t => {
     const cc = catClass(t.info.categoria);
     const ic = iconClass(t.info.categoria);
@@ -514,7 +514,7 @@ function renderTickets() {
 </div>`;
   }).join('');
 }
-
+ 
 // ── SUMMARY ────────────────────────────────────────────────────────────
 function renderSummary() {
   const n = tickets.length;
@@ -528,7 +528,7 @@ function renderSummary() {
   document.getElementById('s-total').textContent = '$' + total.toFixed(0);
   document.getElementById('s-cats').textContent = Object.keys(bycat).length;
   document.getElementById('s-avg').textContent = n ? '$' + (total/n).toFixed(0) : '$0';
-
+ 
   const bars = document.getElementById('cat-bars');
   if(!Object.keys(bycat).length) { bars.innerHTML = '<div class="empty"><p>Guarda tickets para ver estadísticas</p></div>'; return; }
   const max = Math.max(...Object.values(bycat));
@@ -541,14 +541,14 @@ function renderSummary() {
   <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
 </div>`).join('') + '</div>';
 }
-
+ 
 // ── SETTINGS ───────────────────────────────────────────────────────────
 function saveKey() {
   const k = document.getElementById('api-key-input').value.trim();
   localStorage.setItem('anthropic_key', k);
   updateKeyStatus();
 }
-
+ 
 function updateKeyStatus() {
   const k = localStorage.getItem('anthropic_key') || '';
   const el = document.getElementById('key-status');
@@ -556,7 +556,7 @@ function updateKeyStatus() {
   else if(k.length > 5) { el.textContent = '⚠️ El formato no parece correcto'; el.style.color = 'orange'; }
   else { el.textContent = 'Ingresa tu API Key de Anthropic'; el.style.color = 'var(--sub)'; }
 }
-
+ 
 function clearAll() {
   if(confirm('¿Borrar todos los tickets guardados? No se puede deshacer.')) {
     tickets = [];
@@ -564,7 +564,7 @@ function clearAll() {
     alert('Tickets eliminados.');
   }
 }
-
+ 
 // ── HELPERS ────────────────────────────────────────────────────────────
 function catClass(c) {
   if(!c) return 'cat-other';
@@ -576,12 +576,12 @@ function catClass(c) {
   if(/ropa|moda|calzad|cloth/i.test(c)) return 'cat-cloth';
   return 'cat-other';
 }
-
+ 
 function iconClass(c) {
   const cc = catClass(c);
   return cc.replace('cat-','icon-');
 }
-
+ 
 function catEmoji(c) {
   if(!c) return '🧾';
   if(/aliment|super|restaur|comid|café|cafe/i.test(c)) return '🛒';
